@@ -2,17 +2,19 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: olarizi <olahrizi@student.1337.ma>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
+/*                                                    +:+ +:+        
+	+:+     */
+/*   By: olarizi <olahrizi@student.1337.ma>         +#+  +:+      
+	+#+        */
+/*                                                +#+#+#+#+#+  
+	+#+           */
 /*   Created: 2022/12/06 02:21:08 by olarizi           #+#    #+#             */
 /*   Updated: 2022/12/06 02:21:08 by olarizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"
 #include "get_next_line.h"
-
+#include "pipex_bonus.h"
 
 static void	child(char **av, t_pipe *pipex, int fd_in, int it)
 {
@@ -25,66 +27,75 @@ static void	child(char **av, t_pipe *pipex, int fd_in, int it)
 	pipex->cmd = get_command(pipex->paths, pipex->cmd_args[0]);
 	if (!pipex->cmd)
 	{
-		free_child(pipex);
-		p_error("Command not found");
+		write(2, ERR_CMD, ft_strlen(ERR_CMD));
+		exit(1);
 	}
 	execve(pipex->cmd, pipex->cmd_args, NULL);
-	free_child(pipex);
+	close(fd_in);
+	close(pipex->fd[1]);
 }
 
 static void	wait_and_continue(t_pipe *pipex, int *fd_in)
 {
-	waitpid(-1, NULL, 0);
+	waitpid(pipex->pid, NULL, 0);
 	close(pipex->fd[1]);
 	*fd_in = pipex->fd[0];
+}
+
+void	get_ready(int ac, char **av, char **env, t_pipe *pipex)
+{
+	pipex->cmd_count = ac - 4;
+	pipex->paths = ft_split(find_path(env), ':');
+	pipex->infile = open(".temp", O_RDONLY);
+	pipex->outfile = open(av[ac - 1], O_CREAT | O_APPEND | O_RDWR, 0644);
+	if (pipex->infile < 0 || pipex->outfile < 0)
+	{
+		unlink(".temp");
+		p_error(ERR_FILES);
+	}
+}
+
+static void	initialize_stuff(int ac, char **av, char **env, t_pipe *pipex)
+{
+	char	*line;
+
+	pipex->infile = open(".temp", O_CREAT | O_TRUNC | O_RDWR, 0644);
+	if (pipex->infile < 0)
+		p_error(ERR_TEMP);
+	while (1)
+	{
+		write(1, "heredoc>", 8);
+		line = get_next_line(0);
+		if (!line)
+			p_error(ERR_LINE);
+		if (!ft_strncmp(line, av[2], ft_strlen(av[2])))
+			break ;
+		write(pipex->infile, line, ft_strlen(line));
+		free(line);
+	}
+	free(line);
+	close(pipex->infile);
+	get_ready(ac, av, env, pipex);
 }
 
 void	here_doc(int ac, char **av, char **env)
 {
 	t_pipe	pipex;
-	int	fd_in;
-	char *line;
-	int it;
-	int file;
+	int		fd_in;
+	int		it;
 
-	//todo : print the limiter followed by >
 	if (ac < 6)
-		error("Invalid arguments for here_doc\n");
-	file = open(".temp", O_CREAT | O_TRUNC | O_RDWR, 0644);
-	if (file < 0)
-		p_error("Failed to open a temp file.");
-	pipex.cmd_count = ac - 4;
-	pipex.paths = ft_split(find_path(env), ':');
-	while (1)
-	{
-		write(1, ">", 1);
-		line = get_next_line(0);
-		if (line < 0)
-			p_error("failed to get the line.");
-		if (!ft_strncmp(line, av[2], ft_strlen(av[2])))
-			break;
-		write(file, line, ft_strlen(line));
-		free(line);
-	}
-	free(line);
-	close(file);
-	pipex.infile = open(".temp", O_RDONLY);
-	pipex.outfile = open(av[ac - 1], O_CREAT | O_APPEND | O_RDWR, 0664);
-	if (pipex.infile < 0 || pipex.outfile < 0)
-	{
-		unlink(".temp");
-		p_error("failed to open the files");
-	}
-	it = 0;
+		error(INVALID_ARGS_HERE_DOC);
+	initialize_stuff(ac, av, env, &pipex);
 	fd_in = pipex.infile;
-	pipex.cmd_count = ac - 4;
+	it = 0;
 	while (it < pipex.cmd_count)
 	{
 		if (pipe(pipex.fd) < 0)
-			p_error("Failed to create a pipe.");
+			p_error(ERR_PIPE);
 		pipex.pid = fork();
 		if (pipex.pid < 0)
-			p_error("Failed to fork.");
+			p_error(ERR_FORK);
 		else if (pipex.pid == 0)
 			child(av, &pipex, fd_in, it);
 		else
@@ -93,6 +104,5 @@ void	here_doc(int ac, char **av, char **env)
 			it++;
 		}
 	}
-	free_parent(&pipex);
 	unlink(".temp");
 }

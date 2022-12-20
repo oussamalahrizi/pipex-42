@@ -19,14 +19,14 @@ char	*find_path(char **env)
 	return (*env + 5);
 }
 
-void	wait_and_continue(t_pipe *pipex, int *fd_in)
+static void	wait_and_continue(t_pipe *pipex, int *fd_in)
 {
 	waitpid(-1, NULL, 0);
 	close(pipex->fd[1]);
 	*fd_in = pipex->fd[0];
 }
 
-void	child(char **av, t_pipe *pipex, int fd_in, int it)
+static void	child(char **av, t_pipe *pipex, int fd_in, int it)
 {
 	dup2(fd_in, 0);
 	if (it != pipex->cmd_count - 1)
@@ -37,11 +37,10 @@ void	child(char **av, t_pipe *pipex, int fd_in, int it)
 	pipex->cmd = get_command(pipex->paths, pipex->cmd_args[0]);
 	if (!pipex->cmd)
 	{
-		free_child(pipex);
-		p_error("Command not found");
+		write(2, ERR_CMD, ft_strlen(ERR_CMD));
+		exit(1);
 	}
 	execve(pipex->cmd, pipex->cmd_args, NULL);
-	free_child(pipex);
 }
 
 void	initiliaze_stuff(t_pipe *pipex, int ac, char **env, char **av)
@@ -49,7 +48,7 @@ void	initiliaze_stuff(t_pipe *pipex, int ac, char **env, char **av)
 	pipex->infile = open(av[1], O_RDONLY);
 	pipex->outfile = open(av[ac - 1], O_CREAT | O_TRUNC | O_RDWR, 0644);
 	if (pipex->infile < 0 || pipex->outfile < 0)
-		p_error("Failed to open files.");
+		p_error(ERR_FILES);
 	pipex->cmd_count = ac - 3;
 	pipex->paths = ft_split(find_path(env), ':');
 }
@@ -66,10 +65,10 @@ void	multi_pipes(int ac, char **av, char **env)
 	while (it < pipex.cmd_count)
 	{
 		if (pipe(pipex.fd) < 0)
-			p_error("Failed to create a pipe.");
+			p_error(ERR_PIPE);
 		pipex.pid = fork();
 		if (pipex.pid < 0)
-			p_error("Failed to fork.");
+			p_error(ERR_FORK);
 		else if (pipex.pid == 0)
 			child(av, &pipex, fd_in, it);
 		else
@@ -78,5 +77,4 @@ void	multi_pipes(int ac, char **av, char **env)
 			it++;
 		}
 	}
-	free_parent(&pipex);
 }

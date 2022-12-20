@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olarizi <olahrizi@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: olahrizi <olahrizi@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 08:06:25 by olahrizi          #+#    #+#             */
-/*   Updated: 2022/12/06 04:27:01 by olarizi          ###   ########.fr       */
+/*   Updated: 2022/12/12 22:12:57 by olahrizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@ char	*join_strs(char *s1, char *s2)
 	char	*join;
 	char	*start;
 
-	join = (char *)malloc(sizeof(char) * (ft_strlength(s1) + ft_strlength(s2) + 1));
+	join = (char *)malloc(sizeof(char) * (ft_strlen2(s1) + ft_strlen2(s2) + 1));
 	if (!join)
 		return (NULL);
 	start = join;
 	join = str_copy(join, s1);
-	join += ft_strlength(s1);
+	join += ft_strlen2(s1);
 	join = str_copy(join, s2);
-	join += ft_strlength(s2);
+	join += ft_strlen2(s2);
 	*join = 0;
 	free(s1);
 	return (start);
@@ -43,7 +43,7 @@ char	*str_copy(char *dest, char *src)
 	return (dest);
 }
 
-size_t	ft_strlength(char *s)
+size_t	ft_strlen2(char *s)
 {
 	size_t	i;
 

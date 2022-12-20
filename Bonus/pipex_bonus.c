@@ -15,7 +15,7 @@
 int	main(int ac, char **av, char **env)
 {
 	if (ac < 5)
-		error("Invalid arguments.\n");
+		error(INVALID_ARGS);
 	if (!ft_strncmp("here_doc", av[1], ft_strlen("here_doc")))
 		here_doc(ac, av, env);
 	else

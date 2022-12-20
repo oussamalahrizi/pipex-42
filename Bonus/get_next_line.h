@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olarizi <olahrizi@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: olahrizi <olahrizi@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 08:06:12 by olahrizi          #+#    #+#             */
-/*   Updated: 2022/12/06 04:25:57 by olarizi          ###   ########.fr       */
+/*   Updated: 2022/12/12 22:12:42 by olahrizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 char	*join_strs(char *s1, char *s2);
 char	*str_copy(char *dest, char *src);
-size_t	ft_strlength(char *s);
+size_t	ft_strlen2(char *s);
 char	*get_next_line(int fd);
 char	*search(char *s, char c);
 void	*reset_c(size_t nelem, size_t elsize);

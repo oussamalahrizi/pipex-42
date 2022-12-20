@@ -32,6 +32,15 @@ typedef struct s_pipe
 	int		cmd_count;
 }	t_pipe;
 
+# define INVALID_ARGS "Invalid arguments.\n"
+# define INVALID_ARGS_HERE_DOC "Invalid arguments for here_doc\n"
+# define ERR_FILES "Error with opening files."
+# define ERR_TEMP "Failed to create a temp file."
+# define ERR_PIPE "Error with pipe."
+# define ERR_CMD "Command not found.\n"
+# define ERR_FORK "Failed to fork."
+# define ERR_LINE "Failed to get the line."
+
 char	**ft_split(char *s, char c);
 int		ft_strncmp(char*s1, char *s2, size_t n);
 char	*ft_strjoin(char *s1, char *s2);

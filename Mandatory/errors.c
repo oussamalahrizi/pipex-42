@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   errors.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olarizi <olahrizi@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: olahrizi <olahrizi@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/02 01:46:11 by olarizi           #+#    #+#             */
-/*   Updated: 2022/12/02 01:46:11 by olarizi          ###   ########.fr       */
+/*   Created: 2022/12/10 00:26:59 by olahrizi          #+#    #+#             */
+/*   Updated: 2022/12/10 00:26:59 by olahrizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	error(char *str)
 	exit(EXIT_FAILURE);
 }
 
-void p_error(char *str)
+void	p_error(char *str)
 {
 	perror(str);
 	exit(EXIT_FAILURE);

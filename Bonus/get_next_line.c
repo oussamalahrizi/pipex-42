@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olarizi <olahrizi@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: olahrizi <olahrizi@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 08:06:00 by olahrizi          #+#    #+#             */
-/*   Updated: 2022/12/06 04:26:05 by olarizi          ###   ########.fr       */
+/*   Updated: 2022/12/12 22:13:16 by olahrizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	*update_holder(char *holder)
 		free(holder);
 		return (NULL);
 	}
-	new = (char *)malloc(sizeof(char) * (ft_strlength(holder) - i + 1));
+	new = (char *)malloc(sizeof(char) * (ft_strlen2(holder) - i + 1));
 	if (!new)
 		return (NULL);
 	i++;
