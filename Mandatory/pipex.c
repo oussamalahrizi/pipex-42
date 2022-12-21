@@ -17,14 +17,20 @@
 
 char	*find_path(char **env)
 {
-	while (ft_strncmp("PATH", *env, 4))
+	while (*env)
+	{
+		if (!ft_strncmp("PATH", *env, 4))
+			return (*env + 5);
 		env++;
-	return (*env + 5);
+	}
+	return (NULL);
 }
 
 void	initialize(t_tube *pipex, char **env, char **av)
 {
 	pipex->paths = ft_split(find_path(env), ':');
+	if (!pipex->paths)
+		error(ERR_PATH);
 	pipex->input = open(av[1], O_RDONLY);
 	pipex->output = open(av[4], O_TRUNC | O_CREAT | O_RDWR, 0644);
 	if (pipex->input < 0 || pipex->output < 0)
@@ -57,7 +63,10 @@ int	main(int ac, char **av, char **env)
 		if (pipex.pid2 == 0)
 			second_child(&pipex, av);
 		else
-			waitpid(-1, NULL, 0);
+		{
+			waitpid(pipex.pid1, NULL, 0);
+			waitpid(pipex.pid2, NULL, 0);
+		}
 	}
 	return (EXIT_SUCCESS);
 }

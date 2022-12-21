@@ -28,6 +28,7 @@
 # define ERR_PIPE "Error with pipe."
 # define ERR_CMD "Command not found.\n"
 # define ERR_FORK "Failed to fork."
+# define ERR_PATH "path not found.\n"
 
 typedef struct pip
 {
